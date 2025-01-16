@@ -1,0 +1,23 @@
+name: Create Package and Push Helm Chart
+
+on:
+  push:
+    branches: ["main"]
+    paths: ["helm/**"]
+
+jobs:
+  create-package-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate with GitHub Packages
+        run: helm registry login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
+
+      - name: Create Helm Chart Package
+        run: helm package helm
+
+      - name: Push Docker Image
+        run: helm push $(ls | grep .tgz) oci://ghcr.io/${{ github.repository }}

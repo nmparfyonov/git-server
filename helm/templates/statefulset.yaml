@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  serviceName: "{{ .Release.Name }}-{{ .Chart.Name }}"
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+          ports:
+            - containerPort: 22
+          volumeMounts:
+            - name: git-repositories
+              mountPath: {{ .Values.git.repositories.baseDir | default "/repos" }}
+          env:
+            {{- if .Values.git.repositories.name }}
+            - name: GIT_REPOS_NAME
+              value: "{{ join "," .Values.git.repositories.name }}"
+            {{- end }}
+            {{- if .Values.git.repositories.baseDir }}
+            - name: GIT_REPOS_DIR
+              value: "{{ .Values.git.repositories.baseDir }}"
+            {{- end }}
+            - name: SSH_PUBLIC_KEYS
+              value: "{{ join "," .Values.ssh_public_keys }}"
+            {{- range .Values.extra_env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - "{{ .Values.healthcheck.command }}"
+            initialDelaySeconds: {{ .Values.healthcheck.liveness.initialDelaySeconds }}
+            failureThreshold: {{ .Values.healthcheck.liveness.failureThreshold }}
+            periodSeconds: {{ .Values.healthcheck.liveness.periodSeconds }}
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - "{{ .Values.healthcheck.command }}"
+            initialDelaySeconds: {{ .Values.healthcheck.readiness.initialDelaySeconds }}
+            failureThreshold: {{ .Values.healthcheck.readiness.failureThreshold }}
+            periodSeconds: {{ .Values.healthcheck.readiness.periodSeconds }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+              - SYS_CHROOT
+      volumes:
+        - name: git-repositories
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-{{ .Chart.Name }}-pvc
+{{- if .Values.tolerations }}
+      tolerations:
+{{ .Values.tolerations | toYaml | indent 6 }}
+{{- end }}
+{{- if .Values.affinity }}
+      affinity:
+{{ .Values.affinity | toYaml | indent 8 }}
+{{- end }}
