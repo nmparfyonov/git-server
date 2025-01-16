@@ -29,4 +29,4 @@ jobs:
 
       - name: Push Docker Image
         run: |
-          docker push $IMAGE_NAME:$TAG $IMAGE_NAME:latest
+          docker push --all-tags $IMAGE_NAME
