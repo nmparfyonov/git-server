@@ -1,0 +1,71 @@
+replicaCount: 1
+
+image:
+  repository: docker.io/nmparfyonov/git-server
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+git:
+  repositories:
+    baseDir: "/repos"
+    name:
+      - configs
+      - another-one
+
+ssh_public_keys:
+  - SSH_PUBLIC_KEY
+
+service:
+  type: "ClusterIP"
+  # nodePort: 32500
+
+# extra_env:
+#   - name: EXTRA_ENV_KEY
+#     value: "EXTRA_ENV_VALUE"
+
+resources:
+  limits:
+    cpu: 300m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi
+
+healthcheck:
+  command: "/healthcheck.sh"
+  liveness:
+    initialDelaySeconds: 10
+    failureThreshold: 3
+    periodSeconds: 30
+  readiness:
+    initialDelaySeconds: 10
+    failureThreshold: 1
+    periodSeconds: 30
+
+persistence:
+  storageClass: nfs-client
+  accessMode: ReadWriteOnce
+  size: 1Gi
+
+tolerations:
+  - key: "node.kubernetes.io/unreachable"
+    operator: "Exists"
+    effect: "NoExecute"
+    tolerationSeconds: 90
+  - key: "node.kubernetes.io/not-ready"
+    operator: "Exists"
+    effect: "NoExecute"
+    tolerationSeconds: 90
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: "app"
+                operator: In
+                values:
+                  - git-server
+          topologyKey: "kubernetes.io/hostname"
