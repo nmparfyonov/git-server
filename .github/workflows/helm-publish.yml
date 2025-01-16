@@ -5,6 +5,9 @@ on:
     branches: ["main"]
     paths: ["helm/**"]
 
+permissions:
+  packages: write
+
 jobs:
   create-package-and-push:
     runs-on: ubuntu-latest
@@ -19,5 +22,5 @@ jobs:
       - name: Create Helm Chart Package
         run: helm package helm
 
-      - name: Push Docker Image
+      - name: Push Helm Chart
         run: helm push $(ls | grep .tgz) oci://ghcr.io/${{ github.repository }}
