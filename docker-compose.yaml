@@ -1,0 +1,18 @@
+services:
+  git-server:
+    image: git-server:1.0.0
+    # restart: always
+    container_name: git-server
+    ports:
+      - "22:22"
+    env_file:
+      - .env
+    volumes:
+      - ./repositories:/repos
+      # - ./authorized_keys:/home/git/.ssh/authorized_keys
+    healthcheck:
+      test: ["CMD", "/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
