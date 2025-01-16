@@ -1,6 +1,6 @@
 services:
   git-server:
-    image: git-server:1.0.0
+    image: nmparfyonov/git-server:0.1.0
     # restart: always
     container_name: git-server
     ports:
