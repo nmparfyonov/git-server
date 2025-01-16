@@ -2,7 +2,7 @@ name: Create Package and Push Helm Chart
 
 on:
   push:
-    branches: ["feat/helm-chart"]
+    branches: ["main"]
     paths: ["helm/**"]
 
 jobs:
