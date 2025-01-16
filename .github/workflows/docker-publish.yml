@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: nmparfyonov/git-server
+      IMAGE_NAME: ${{ github.repository }}
       TAG: ${{ github.ref_name }}
 
     steps:
