@@ -1,0 +1,24 @@
+1. SSH Identities
+   The following SSH identities are available for accessing the git-server:
+   {{- range .Values.ssh_public_keys }}
+     - {{ . | regexFind "[^ ]+$" }}
+   {{- end }}
+
+2. Git Clone Commands for Repositories
+   {{- if eq .Values.service.type "ClusterIP" }}
+   The git-server is accessible via its ClusterIP service. Replace `<SERVICE_IP>` with the service's IP address or `<SERVICE_NAME>` if using internal DNS.
+   Available repositories:
+   {{- range .Values.git.repositories.name }}
+     git clone ssh://git@<SERVICE_IP>{{ $.Values.git.repositories.baseDir }}/{{ . }}.git
+   {{- end }}
+   {{- else if eq .Values.service.type "NodePort" }}
+   The git-server is accessible via NodePort. Replace `<NODE_IP>` with the IP address of any Kubernetes node.
+   Available repositories:
+   {{- range .Values.git.repositories.name }}
+     git clone ssh://git@<NODE_IP>:{{ $.Values.service.nodePort }}{{ $.Values.git.repositories.baseDir }}/{{ . }}.git
+   {{- end }}
+   {{- end }}
+
+3. Additional Hint for Host Key Checking
+   To avoid host key checking errors when cloning repositories, set the following environment variable on your host machine:
+     export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"

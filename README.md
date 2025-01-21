@@ -32,8 +32,8 @@ Configuration is done using the container's environment variables:
         ```
     * From a Helm repository:
         ```bash
-        helm install git oci://ghcr.io/nmparfyonov/git-server/git-server --version 0.1.0 -f helm/values.yaml
-        # helm install git oci://ghcr.io/nmparfyonov/git-server/git-server --version 0.1.0 --set ssh_public_keys="$(cat ~/.ssh/id_rsa.pub)"
+        helm install git oci://ghcr.io/nmparfyonov/git-server/git-server --version 0.1.1 -f helm/values.yaml
+        # helm install git oci://ghcr.io/nmparfyonov/git-server/git-server --version 0.1.1 --set ssh_public_keys="$(cat ~/.ssh/id_rsa.pub)"
         ```
 
 ### k8s Manifests
