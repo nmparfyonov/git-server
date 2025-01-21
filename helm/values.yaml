@@ -17,6 +17,7 @@ ssh_public_keys:
 
 service:
   type: "ClusterIP"
+  # type: "NodePort"
   # nodePort: 32500
 
 # extra_env:
