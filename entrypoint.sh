@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Check ssh keys
-if [ -z "$SSH_PUBLIC_KEYS" ] && [ ! "$(grep -v '^[[:space:]]*$' $USER_GIT_HOME/.ssh/authorized_keys)" ]; then
-    echo -e "Error: SSH_PUBLIC_KEYS environment variable is not set\nError: \"$USER_GIT_HOME/.ssh/authorized_keys\" file is emply."
+if [ -z "$GIT_USER_PASSWORD" ] && [ -z "$SSH_PUBLIC_KEYS" ] && [ ! "$(grep -v '^[[:space:]]*$' $USER_GIT_HOME/.ssh/authorized_keys)" ]; then
+    echo -e "Error: GIT_USER_PASSWORD environment variable is not set\nError: SSH_PUBLIC_KEYS environment variable is not set\nError: \"$USER_GIT_HOME/.ssh/authorized_keys\" file is emply."
     echo -e "To grant SSH access:\n\
+    - Provide a password for git user using the GIT_USER_PASSWORD environment variable\n\
     - Provide a comma-separated list of public keys using the SSH_PUBLIC_KEYS environment variable\n\
     - Mount non-empty \"authorized_keys\" file to path \"$USER_GIT_HOME/.ssh/authorized_keys\"\n"
     exit 1
@@ -14,6 +15,11 @@ if [ -n "$SSH_PUBLIC_KEYS" ]; then
     echo "$SSH_PUBLIC_KEYS" | tr ',' '\n' > /home/git/.ssh/authorized_keys
     chmod 600 $USER_GIT_HOME/.ssh/authorized_keys
     chown git:git $USER_GIT_HOME/.ssh/authorized_keys
+fi
+
+# Add git user password from env if GIT_USER_PASSWORD is set
+if [ -n "$GIT_USER_PASSWORD" ]; then
+    echo "git:$GIT_USER_PASSWORD" | chpasswd
 fi
 
 # Print available ssh identities

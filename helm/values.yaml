@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: docker.io/nmparfyonov/git-server
-  tag: "0.1.0"
+  tag: "0.1.1"
   pullPolicy: IfNotPresent
 
 git:
@@ -11,6 +11,7 @@ git:
     name:
       - configs
       - another-one
+  # password: "GIT_USER_PASSWORD"
 
 ssh_public_keys:
   - SSH_PUBLIC_KEY
