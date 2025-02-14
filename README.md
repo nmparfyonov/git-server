@@ -9,9 +9,10 @@ Git server with OpenSSH
 
 ### Configuration
 Configuration is done using the container's environment variables:
-* `SSH_PUBLIC_KEYS` - public SSH keys for accessing repositories, separated by commas. A single key can be specified. Running without this variable is allowed if the `authorized_keys` file containing SSH keys is mounted as `authorized_keys:/home/git/.ssh/authorized_keys`.
+* `SSH_PUBLIC_KEYS` - public SSH keys for accessing repositories, separated by commas. A single key can be specified. Running without this variable is allowed if the `authorized_keys` file containing SSH keys is mounted as `authorized_keys:/home/git/.ssh/authorized_keys` or git user password is set.
 * `GIT_REPOS_NAME` - list of repositories to be created, separated by commas. A single repository can be specified. This can be left empty, in which case a default repository named `configs` will be created.
 * `GIT_REPOS_DIR` - root directory for repositories. Running without this variable is allowed, in which case the directory `/repos` will be created.
+* `GIT_USER_PASSWORD` - git user password for accessing repositories. Running without this variable is allowed if SSH key is set.
 
 ### Starting the Server
 1. Edit the environment variable file [`.env`](./.env).

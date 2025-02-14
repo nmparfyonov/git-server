@@ -1,7 +1,7 @@
 FROM docker.io/ubuntu:22.04
 
 LABEL maintainer="Mikita Parfionau <nikita.parfyonov.ai@gmail.com>" \
-    version="0.1.0" \
+    version="0.1.1" \
     description="Git server with OpenSSH"
 
 ENV DEBIAN_FRONTEND=noninteractive \

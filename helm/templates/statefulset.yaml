@@ -37,6 +37,10 @@ spec:
             - name: GIT_REPOS_NAME
               value: "{{ join "," .Values.git.repositories.name }}"
             {{- end }}
+            {{- if .Values.git.password }}
+            - name: GIT_USER_PASSWORD
+              value: "{{ join "," .Values.git.password }}"
+            {{- end }}
             {{- if .Values.git.repositories.baseDir }}
             - name: GIT_REPOS_DIR
               value: "{{ .Values.git.repositories.baseDir }}"
